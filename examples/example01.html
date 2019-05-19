@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    </head>
+    <body>
+        <svg id="test" width="800" height="600" version="1.1" xmlns="http://www.w3.org/2000/svg" style="border:2px solid #c2c2c2">
+        </svg>
+
+    </body>
+    <script src="../grimgrib.js">
+    </script>
+    <script>
+        var text = `[
+            { "type": "point", "id": "a", "x": 5, "y": 35 },
+            { "type": "point", "id": "b", "x": 50, "y": 10 },
+            { "type": "point", "id": "c", "x": 100, "y": 35 },
+            { "type": "point", "id": "d", "x": 80, "y": 70 },
+            { "type": "point", "id": "e", "x": 20, "y": 70 },
+            { "type": "line", "id": "a-b-1", "node": ["a", "b"] },
+            { "type": "line", "id": "a-c-1", "node": ["a", "c"] },
+            { "type": "line", "id": "a-e-1", "node": ["a", "e"] },
+            { "type": "line", "id": "c-e-1", "node": ["c", "e"] },
+            { "type": "line", "id": "c-d-1", "node": ["c", "d"] },
+            { "type": "line", "id": "d-e-1", "node": ["d", "e"] }
+        ]`;
+        GrimGrib.fromJSONText('test', text);
+    </script>
+</html>
