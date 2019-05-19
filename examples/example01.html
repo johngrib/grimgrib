@@ -12,7 +12,7 @@
     <script>
         var text = `[
             { "type": "point", "id": "a", "x": 5, "y": 35 },
-            { "type": "point", "id": "b", "x": 50, "y": 10 },
+            { "type": "point", "id": "b", "x": 50, "y": 14 },
             { "type": "point", "id": "c", "x": 100, "y": 35 },
             { "type": "point", "id": "d", "x": 80, "y": 70 },
             { "type": "point", "id": "e", "x": 20, "y": 70 },
@@ -21,7 +21,12 @@
             { "type": "line", "id": "a-e-1", "node": ["a", "e"] },
             { "type": "line", "id": "c-e-1", "node": ["c", "e"] },
             { "type": "line", "id": "c-d-1", "node": ["c", "d"] },
-            { "type": "line", "id": "d-e-1", "node": ["d", "e"] }
+            { "type": "line", "id": "d-e-1", "node": ["d", "e"] },
+            { "type": "text", "id": "a-t", "ref": "a", "text": "a", "padding": {"x":0, "y":6} },
+            { "type": "text", "id": "b-t", "ref": "b", "text": "b", "padding": {"x":0, "y":6} },
+            { "type": "text", "id": "c-t", "ref": "c", "text": "c", "padding": {"x":0, "y":6} },
+            { "type": "text", "id": "c-t", "ref": "d", "text": "d", "padding": {"x":0, "y":6} },
+            { "type": "text", "id": "c-t", "ref": "e", "text": "e", "padding": {"x":0, "y":6} }
         ]`;
         GrimGrib.fromJSONText('test', text);
     </script>

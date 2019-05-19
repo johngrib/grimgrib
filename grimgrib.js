@@ -9,13 +9,11 @@ var GrimGrib = (function() {
         LINE: 'polygon',
     };
 
+
     const svgGenerator = {};
-    svgGenerator[SHAPE.CIRCLE] = function(s) {
-        return newSVG(SHAPE.CIRCLE, s);
-    };
-    svgGenerator[SHAPE.LINE] = function(s) {
-        return newSVG(SHAPE.LINE, s);
-    }
+    Object.values(SHAPE).forEach((item) => {
+        svgGenerator[item] = (s) => newSVG(item, s);
+    });
 
     const init = {
         point: function(s) {
@@ -37,6 +35,21 @@ var GrimGrib = (function() {
                 'stroke-width': get(s, 'width', 1),
                 stroke: get(s, 'color', COLOR.BLACK),
             }
+        },
+        text: function(s) {
+            return {
+                tag: SHAPE.TEXT,
+                id: s.id,
+                ref: get(s, 'ref', undefined),
+                'font-size': get(s, 'size', 10),
+                x: get(s, 'x', 0),
+                y: get(s, 'y', 0),
+                text: get(s, 'text', ''),
+                padding: get(s, 'padding', {
+                    x: 0,
+                    y: 10
+                })
+            }
         }
     };
 
@@ -47,6 +60,9 @@ var GrimGrib = (function() {
 
     function newSVG(tag, values) {
         const svg = document.createElementNS('http://www.w3.org/2000/svg', tag);
+        delete values.tag;
+        delete values.id;
+        delete values.padding;
         for (var key in values) {
             svg.setAttribute(key, values[key]);
         }
@@ -66,7 +82,12 @@ var GrimGrib = (function() {
     }
 
     function collectPosition(item) {
+        return calcPosition[item.tag](item);
+    }
 
+    const calcPosition = {};
+    calcPosition[SHAPE.CIRCLE] = item => item;
+    calcPosition[SHAPE.LINE] = function(item) {
         if (!item['node']) {
             return item;
         }
@@ -76,7 +97,15 @@ var GrimGrib = (function() {
                 return a + ' ' + b.x + ',' + b.y;
             }, '');
         return item;
+    };
+    calcPosition[SHAPE.TEXT] = function(item) {
+        if (item['ref']) {
+            item.x = position[item['ref']].x - item.padding.x;
+            item.y = position[item['ref']].y - item.padding.y;
+        }
+        return item;
     }
+
 
     function draw(svg, data) {
         data = data.map((item) => {
@@ -86,7 +115,11 @@ var GrimGrib = (function() {
         data.forEach(savePosition);
         data.map(collectPosition)
             .forEach((item) => {
-                svg.appendChild(newSVG(item.tag, item));
+                const child = newSVG(item.tag, item);
+                if (item.text) {
+                    child.innerHTML = item.text;
+                }
+                svg.appendChild(child);
             });
     }
 
