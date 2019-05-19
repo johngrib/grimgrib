@@ -16,27 +16,29 @@ svgGenerator[SHAPE.LINE] = function(s) {
     return newSVG(SHAPE.LINE, s);
 }
 
-function point(s) {
-    return {
-        tag: SHAPE.CIRCLE,
-        id: s.id,
-        cx: get(s, 'x', 0),
-        cy: get(s, 'y', 0),
-        rx: get(s, 'r', 3),
-        ry: get(s, 'r', 3),
-        fill: get(s, 'color', COLOR.BLACK),
-    };
-}
-
-function line(s) {
-    return {
-        tag: SHAPE.LINE,
-        id: s.id,
-        node: get(s, 'node', []),
-        'stroke-width': get(s, 'width', 1),
-        stroke: get(s, 'color', COLOR.BLACK),
+const init = {
+    point: function(s) {
+        return {
+            tag: SHAPE.CIRCLE,
+            id: s.id,
+            cx: get(s, 'x', 0),
+            cy: get(s, 'y', 0),
+            rx: get(s, 'r', 3),
+            ry: get(s, 'r', 3),
+            fill: get(s, 'color', COLOR.BLACK),
+        };
+    },
+    line: function(s) {
+        return {
+            tag: SHAPE.LINE,
+            id: s.id,
+            node: get(s, 'node', []),
+            'stroke-width': get(s, 'width', 1),
+            stroke: get(s, 'color', COLOR.BLACK),
+        }
     }
-}
+};
+
 
 function get(obj, key, defaultValue) {
     return obj[key] === undefined ? defaultValue : obj[key];
@@ -69,70 +71,33 @@ function collectPosition(item) {
     if (!item['node']) {
         return item;
     }
-    console.log(item);
-    console.log(item.node)
-    console.log(item.node.map(id => position[id]));
 
-    const points = item.node.map((id) => position[id])
+    item.points = item.node.map((id) => position[id])
         .reduce((a, b) => {
             return a + ' ' + b.x + ',' + b.y;
         }, '');
-    console.log(points);
-    item.points = points;
     return item;
 }
 
-var data = [
-    point({
-        id: 'a',
-        x: 5,
-        y: 35
-    }),
-    point({
-        id: 'b',
-        x: 50,
-        y: 10
-    }),
-    point({
-        id: 'c',
-        x: 100,
-        y: 35
-    }),
-    point({
-        id: 'd',
-        x: 80,
-        y: 70
-    }),
-    point({
-        id: 'e',
-        x: 20,
-        y: 70
-    }),
-    line({
-        id: 'a-b-1',
-        node: ['a', 'b'],
-    }),
-    line({
-        id: 'a-c-1',
-        node: ['a', 'c'],
-    }),
-    line({
-        id: 'a-e-1',
-        node: ['a', 'e'],
-    }),
-    line({
-        id: 'c-e-1',
-        node: ['c', 'e'],
-    }),
-    line({
-        id: 'c-d-1',
-        node: ['c', 'd'],
-    }),
-    line({
-        id: 'd-e-1',
-        node: ['d', 'e'],
-    }),
-];
+var text = `[
+    { "type": "point", "id": "a", "x": 5, "y": 35 },
+    { "type": "point", "id": "b", "x": 50, "y": 10 },
+    { "type": "point", "id": "c", "x": 100, "y": 35 },
+    { "type": "point", "id": "d", "x": 80, "y": 70 },
+    { "type": "point", "id": "e", "x": 20, "y": 70 },
+    { "type": "line", "id": "a-b-1", "node": ["a", "b"] },
+    { "type": "line", "id": "a-c-1", "node": ["a", "c"] },
+    { "type": "line", "id": "a-e-1", "node": ["a", "e"] },
+    { "type": "line", "id": "c-e-1", "node": ["c", "e"] },
+    { "type": "line", "id": "c-d-1", "node": ["c", "d"] },
+    { "type": "line", "id": "d-e-1", "node": ["d", "e"] }
+]`;
+
+var data = JSON.parse(text);
+
+data = data.map((item) => {
+    return init[item.type](item);
+});
 
 data.forEach(savePosition);
 data.map(collectPosition)
